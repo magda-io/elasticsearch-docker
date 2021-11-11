@@ -9,6 +9,8 @@
 ################################################################################
 FROM openjdk:11-jre-buster AS prep_es_files
 
+ARG TARGETARCH
+
 ENV ES_VERSION=6.5.4
 ENV INGEST_PLUGINS="ingest-user-agent ingest-geoip"
 ENV ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch
@@ -44,6 +46,8 @@ RUN for PLUGIN in ${INGEST_PLUGINS}; do \
       elasticsearch-plugin install --batch "$PLUGIN"; done
 
 COPY --chown=1000:0 elasticsearch.yml log4j2.properties config/
+
+COPY --chown=1000:0 jvm.${TARGETARCH}.options config/jvm.options
 
 USER 0
 
